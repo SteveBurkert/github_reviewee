@@ -1,0 +1,36 @@
+name: ReviewBot
+run-name: ReviewBot is linking stacked child pull requests
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      BASE_PR_REF: ${{ github.base_ref }}
+      MY_PR_ID: ${{ github.event.number }}
+      MY_PR_URL: 'https://github.com/${{ github.repository }}/pull/${{ github.event.number }}'
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready."
+      - run: |
+          for base_pr_id in $(gh pr list -H "${{ env.BASE_PR_REF }}" --json number --jq '.[].number'); do
+              base_pr_url="https://github.com/${{ github.repository }}/pull/$base_pr_id"
+              if [ ${{ env.DEFAULT_BRANCH }} == $( gh pr view $base_pr_id --json baseRefName  --jq '.baseRefName') ]; then
+                  gh pr comment ${{ env.MY_PR_ID }} --body "➡️ This seems to be the first child pull request of [the base pull request $base_pr_id]($base_pr_url)."
+                  gh pr comment $base_pr_id --body "➡️ [New child pull request added](${{ env.MY_PR_URL }}). Please merge all children first."
+                  gh pr comment $base_pr_id --body "💡 This seems to be the root pull request with open children. I will convert this pull request to a draft now."
+                  gh pr ready $base_pr_id --undo
+              else
+                  gh pr comment ${{ env.MY_PR_ID }} --body "💡️ Make sure [the base pull request $base_pr_id]($base_pr_url) is merged before merging this pull request."
+                  gh pr comment $base_pr_id --body "➡️ [New child pull request added](${{ env.MY_PR_URL }})."
+              fi
+          done
