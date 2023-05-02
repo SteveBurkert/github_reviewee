@@ -1,4 +1,5 @@
 name: Label issues
+run-name: ${{ github.actor }} is learning GitHub Actions
 on:
   issues:
     types:
