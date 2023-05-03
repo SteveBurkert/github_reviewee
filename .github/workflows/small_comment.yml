@@ -1,0 +1,14 @@
+name: Link stacked Pull-Requests
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh pr comment $PULL --body "Hi from GitHub CLI" --edit-last
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL: ${{ github.event.pull_request.html_url }}
