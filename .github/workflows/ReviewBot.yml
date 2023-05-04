@@ -1,5 +1,5 @@
 name: ReviewBot
-run-name: ReviewBot is linking stacked pull-requests
+run-name: ReviewBot is linking stacked child pull-requests
 on:
   pull_request:
     types:
@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MAIN_BRANCH_NAME: 'main'
         BASE_PR_REF: ${{ github.base_ref }}
         MY_PR_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/${{ github.event.number }}'
     steps:
@@ -20,8 +21,12 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready."
-      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is ${{ env.MY_PR_URL }} and ref of base ${{ env.BASE_PR_REF }}" 
       - run: |
-          for base_pr_id in $(gh pr list --search "head:${{ env.BASE_PR_REF }}" --json number --jq '.[].number'); do
-              gh pr comment $base_pr_id --body "➡️ [Newer child Pull-Request added](${{ env.MY_PR_URL }})"
+          for base_pr_id in $(gh pr list --search "head:${{ env.BASE_PR_REF }}" --json number --jq '.[].number'); do 
+              gh pr comment $base_pr_id --body "➡️ [New child Pull-Request added](${{ env.MY_PR_URL }}). Please merge this first."
+              if [ ${{ env.MAIN_BRANCH_NAME }} == $( gh pr view $base_pr_id --json baseRefName  --jq '.baseRefName') ]; then
+                  gh pr comment $base_pr_id --body "💡 This seems to be the root pull-request with open childs. Set status to draft now."
+                  gh pr ready $base_pr_id --undo
+              fi
+              
           done
