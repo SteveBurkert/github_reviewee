@@ -13,8 +13,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PR_NUMBER: ${{ github.event.number }}
         BASE_PR_NUMBER: ${{ github.event.pull_request.base.ref  }}
-        REPO_PR_BASE_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/'
-        MY_PR_URL: '${{ env.REPO_PR_BASE_URL }})${{ github.event.number }}'
+        MY_PR_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/${{ github.event.number }}'
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -22,4 +21,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to comment your PR on the runner."
-      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is ${{ env.MY_PR_URL }})" 
+      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is ${{ env.MY_PR_URL }} and ref of base ${{ env.BASE_PR_NUMBER }}" 
+      - run: |
+          base_branch_pull_requests=$(gh pr list --search "head:${{ env.BASE_PR_NUMBER }}" --json number --jq '.[].number')
+
+          for base_pr_id in $(base_branch_pull_requests); do
+              gh pr comment $base_pr_id --body "➡️ [Newer child Pull-Request added](${{ env.MY_PR_URL }})"
+          done
