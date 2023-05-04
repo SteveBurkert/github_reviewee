@@ -20,7 +20,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to comment your PR on the runner."
+      - run: echo "🖥️ The workflow is now ready."
       - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is ${{ env.MY_PR_URL }} and ref of base ${{ env.BASE_PR_NUMBER }}" 
       - run: |
           base_branch_pull_requests=$(gh pr list --search "head:${{ env.BASE_PR_NUMBER }}" --json number --jq '.[].number')
