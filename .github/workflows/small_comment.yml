@@ -13,7 +13,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PR_NUMBER: ${{ github.event.number }}
         BASE_PR_NUMBER: ${{ github.event.pull_request.base.ref  }}
-        MY_PR_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/${{ github.event.number }}'
+        REPO_PR_BASE_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/'
+        MY_PR_URL: '${{ env.REPO_PR_BASE_URL }})${{ github.event.number }}'
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
