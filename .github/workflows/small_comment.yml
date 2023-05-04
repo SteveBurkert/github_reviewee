@@ -21,4 +21,4 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to comment your PR on the runner."
-      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is $(MY_PR_URL)" 
+      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is ${{ env.MY_PR_URL }})" 
