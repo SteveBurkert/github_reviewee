@@ -1,0 +1,23 @@
+name: ReviewBot
+run-name: ReviewBot is linking stacked pull-requests
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BASE_PR_REF: ${{ github.base_ref }}
+        MY_PR_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/${{ github.event.number }}'
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready."
+      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is ${{ env.MY_PR_URL }} and ref of base ${{ env.BASE_PR_REF }}" 
