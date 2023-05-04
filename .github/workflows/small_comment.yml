@@ -13,6 +13,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PR_NUMBER: ${{ github.event.number }}
         BASE_PR_NUMBER: ${{ github.event.pull_request.base.ref  }}
+        MY_PR_URL: 'https://github.com/SteveBurkert/github_reviewee/pull/${{ github.event.number }}'
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -20,4 +21,4 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to comment your PR on the runner."
-      - run: gh pr comment --body "Hi from GitHub CLI. Base is $(BASE_PR_NUMBER)" 
+      - run: gh pr comment --body "Hi from GitHub CLI. Link to this PR is $(MY_PR_URL)" 
