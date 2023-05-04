@@ -7,9 +7,9 @@ on:
       - reopened
       - edited
 permissions: 
-    pull-requests: write
-    contents: read
-    statuses: write
+    pull-requests: read|write
+    contents: read|write
+    statuses: read|write
 jobs:
   comment:
     runs-on: ubuntu-latest
