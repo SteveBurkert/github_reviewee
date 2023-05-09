@@ -25,9 +25,13 @@ jobs:
       - run: |
           for base_pr_id in $(gh pr list --search "head:${{ env.BASE_PR_REF }}" --json number --jq '.[].number'); do 
               gh pr comment ${{ env.MY_PR_ID }} --body "➡️ This pull request seems to be child of: [$base_pr_id](https://github.com/SteveBurkert/github_reviewee/pull/$base_pr_id)."
-              gh pr comment $base_pr_id --body "➡️ [New child Pull-Request added](${{ env.MY_PR_URL }}). Please merge this first."
               if [ ${{ env.MAIN_BRANCH_NAME }} == $( gh pr view $base_pr_id --json baseRefName  --jq '.baseRefName') ]; then
-                  gh pr comment $base_pr_id --body "💡 This seems to be the root pull-request with open childs. I will convert this PR to a draft now."
+                  gh pr comment ${{ env.MY_PR_ID }} --body "➡️ This seems to be the first child Pull-Request of [the base PR $base_pr_id](https://github.com/SteveBurkert/github_reviewee/pull/$base_pr_id). Merge this PR and continue with the base afterwards."
+                  gh pr comment $base_pr_id --body "➡️ [New child Pull-Request added](${{ env.MY_PR_URL }}). Please merge all children first."
+                  gh pr comment $base_pr_id --body "💡 This seems to be the root pull-request with open children. I will convert this PR to a draft now."
                   gh pr ready $base_pr_id --undo
+              else 
+                  gh pr comment ${{ env.MY_PR_ID }} --body "➡️ This seems to be a child Pull-Request. Please merge [the base PR $base_pr_id](https://github.com/SteveBurkert/github_reviewee/pull/$base_pr_id) before this PR."
+                  gh pr comment $base_pr_id --body "➡️ [New child Pull-Request added](${{ env.MY_PR_URL }})."
               fi
           done
