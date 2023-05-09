@@ -31,7 +31,7 @@ jobs:
                   gh pr comment $base_pr_id --body "💡 This seems to be the root pull-request with open children. I will convert this PR to a draft now."
                   gh pr ready $base_pr_id --undo
               else 
-                  gh pr comment ${{ env.MY_PR_ID }} --body "➡️ This seems to be a child Pull-Request. Please merge [the base PR $base_pr_id](https://github.com/SteveBurkert/github_reviewee/pull/$base_pr_id) before this PR."
+                  gh pr comment ${{ env.MY_PR_ID }} --body "➡️ This seems to be a child Pull-Request, but not the first. Please merge [the base PR $base_pr_id](https://github.com/SteveBurkert/github_reviewee/pull/$base_pr_id) before this PR."
                   gh pr comment $base_pr_id --body "➡️ [New child Pull-Request added](${{ env.MY_PR_URL }})."
               fi
           done
