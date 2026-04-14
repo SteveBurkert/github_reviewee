@@ -8,7 +8,7 @@ Large pull requests are hard to review. Stacking lets you break a big change int
 
 The trade-off is bookkeeping. With a stack of PRs, you need to merge them in order (top of the stack first, working your way down), and it's easy to lose track of which PR depends on which. Someone might merge a PR before its dependencies are ready, or not realize that a PR is part of a stack at all.
 
-ReviewBot handles that bookkeeping for you. It links the PRs together, reminds you of the merge order, and converts the root PR to a draft until all children above it are merged. You review and merge top-down (FIFO), and the root PR at the bottom collects everything into one final merge to your default branch.
+ReviewBot handles that bookkeeping for you. It links the PRs together, reminds you of the merge order, and converts the root PR to a draft until all children above it are merged. You start by reviewing the root PR (which is now a draft) to get the big picture, but you don't merge it yet. Then you go to the first child PR, review it, and merge it. GitHub automatically updates the next child's base branch, so its diff stays clean and only shows its own changes. You continue working through the stack this way until all children are merged and the root PR is ready to go.
 
 ## What this does
 
