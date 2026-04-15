@@ -40,6 +40,14 @@ Each branch has a PR targeting the one before it. When you open the PR for `feat
 
 When you then open the PR for `feature-auth-docs` (targeting `feature-auth-tests`), ReviewBot will link them and remind you to merge `feature-auth-tests` first.
 
+## How this compares to gh-stack
+
+GitHub is building a native stacked PRs feature called [gh-stack](https://github.github.com/gh-stack/) with a dedicated CLI, UI stack navigator, automatic rebasing, batch merging, and CI that evaluates against the final target branch. It is currently in private preview.
+
+**Use this bot** if you want a zero-config, drop-in solution that works today on any repo. It requires no CLI tooling and no feature flags — just one workflow file.
+
+**Use gh-stack** if you need local workflow tooling (`gs init`, `gs add`, `gs push`), automatic rebasing after partial merges, merge queue integration, or proper branch protection semantics against the final target branch. Once gh-stack is generally available, it will cover everything this bot does and more.
+
 ## Limitations
 
 - The workflow only runs on `opened` and `reopened` events. If you change a PR's base branch after opening it, ReviewBot won't pick that up.
